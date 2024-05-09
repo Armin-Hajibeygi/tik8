@@ -1,6 +1,5 @@
 import gspread
 import pandas as pd
-from const import gsheet_name
 
 
 class Sheet:
