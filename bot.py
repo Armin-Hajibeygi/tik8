@@ -3,15 +3,22 @@ from typing import Final
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from const import TOKEN
+from const import TOKEN, ids
 
 BOT_TOKEN: Final = TOKEN
 
 
 async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    if user_id not in ids:
+        text = "You don't have access to this bot."
+    else:
+        text = "Hello, I'm Tik8 bot! Thanks for using me!"
+
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Hello, I'm Tik8 bot! Thanks for using me!",
+        text=text,
         reply_to_message_id=update.effective_message.id,
     )
 
