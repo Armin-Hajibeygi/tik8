@@ -15,8 +15,9 @@ def check_worksheet_availability(user_id: int, worksheet_name: str) -> str:
     sheet = connect_sheet(user_id)
     worksheet_names = sheet.get_all_worksheet_names()
 
-    if any(name.lower() == worksheet_name.lower() for name in worksheet_names):
-        return worksheet_name
+    for name in worksheet_names:
+        if name.lower() == worksheet_name.lower():
+            return name
     return NOT_VALID_WORKSHEET_NAME
 
 
