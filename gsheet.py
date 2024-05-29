@@ -1,6 +1,6 @@
 import gspread
 import pandas as pd
-from const import gsheet_name
+from const import gsheet_names
 from datetime import datetime
 
 
@@ -25,19 +25,3 @@ class Sheet:
         self.df = pd.DataFrame(self.data[1:], columns=self.data[0]).set_index(
             self.data[0][0]
         )
-
-
-if __name__ == "__main__":
-    sheet = Sheet(gsheet_name)
-    sheet_df = sheet.df
-
-    today = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
-    tasks = [
-        f"Lesson {index} for the {column} time"
-        for index, row in sheet.df.iterrows()
-        for column in sheet.df.columns
-        if row[column] == today
-    ]
-    text = "\n".join(tasks) if tasks else "You have no other tasks for today!"
-
-    print(text)

@@ -1,14 +1,11 @@
-from datetime import datetime
 from typing import Final
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from gsheet import Sheet
-from const import TOKEN, ids, gsheet_name
+from core import get_today_tasks
+from const import TOKEN, ids
 
 BOT_TOKEN: Final = TOKEN
-sheet = Sheet(gsheet_name)
-sheet_df = sheet.df
 NO_ACCESS = "You don't have access to this bot."
 
 
@@ -34,20 +31,13 @@ async def today_task_command_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ):
     if not check_access(update):
-        text = NO_ACCESS
+        response = NO_ACCESS
     else:
-        today = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
-        tasks = [
-            f"Lesson <u>{index}</u> for the <u>{column}</u> time"
-            for index, row in sheet.df.iterrows()
-            for column in sheet.df.columns
-            if row[column] == today
-        ]
-        text = "\n".join(tasks) if tasks else "You have no other tasks for today!"
+        response = get_today_tasks(update.effective_user.id)
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=text,
+        text=response,
         reply_to_message_id=update.effective_message.id,
         parse_mode="HTML",
     )
