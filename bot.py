@@ -4,9 +4,9 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 from core import get_today_tasks, get_all_lessons
 from const import TOKEN, ids
+from messages import NO_ACCESS, START_MESSAGE
 
 BOT_TOKEN: Final = TOKEN
-NO_ACCESS = "You don't have access to this bot."
 
 
 def check_access(update: Update) -> bool:
@@ -18,7 +18,7 @@ async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TY
     text = (
         NO_ACCESS
         if not check_access(update)
-        else "Hello, I'm Tik8 bot! Thanks for using me!"
+        else START_MESSAGE
     )
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -33,7 +33,8 @@ async def today_task_command_handler(
     if not check_access(update):
         response = NO_ACCESS
     else:
-        response = get_today_tasks(update.effective_user.id)
+        worksheet_name = " ".join(context.args)
+        response = get_today_tasks(update.effective_user.id, worksheet_name)
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
