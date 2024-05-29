@@ -24,7 +24,9 @@ def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
     """Retrieve tasks for today from the specified worksheets."""
     sheet = connect_sheet(user_id)
     worksheets = (
-        input_worksheet_name.split("-") if input_worksheet_name else sheet.get_all_worksheet_names()
+        input_worksheet_name.split("-")
+        if input_worksheet_name
+        else sheet.get_all_worksheet_names()
     )
     response_parts = []
 
@@ -36,7 +38,7 @@ def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
             response_parts.append(get_single_worksheet_tasks(sheet, worksheet_name))
         response_parts.append("\n------\n")
 
-    return ''.join(response_parts)
+    return "".join(response_parts)
 
 
 def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str) -> str:

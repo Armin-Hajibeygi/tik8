@@ -15,11 +15,7 @@ def check_access(update: Update) -> bool:
 
 
 async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        NO_ACCESS
-        if not check_access(update)
-        else START_MESSAGE
-    )
+    text = NO_ACCESS if not check_access(update) else START_MESSAGE
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=text,
