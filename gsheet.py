@@ -12,6 +12,8 @@ class Sheet:
         self.sheet = self.client.open(self.sheet_name).get_worksheet_by_id(
             self.sheet_id
         )
+        self.worksheet_names = None
+        self.get_all_worksheet_names()
         self.df = None
         self.data = None
         self.create_df()
@@ -25,3 +27,8 @@ class Sheet:
         self.df = pd.DataFrame(self.data[1:], columns=self.data[0]).set_index(
             self.data[0][0]
         )
+
+    def get_all_worksheet_names(self):
+        self.worksheet_names = []
+        for sheet in self.client.open(self.sheet_name).worksheets():
+            self.worksheet_names.append(sheet.title)

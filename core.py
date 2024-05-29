@@ -22,3 +22,14 @@ def get_today_tasks(user_id: int, sheet_name=None):
     text = "\n".join(tasks) if tasks else "You have no other tasks for today!"
 
     return text
+
+
+def get_all_lessons(user_id: int):
+    sheet = connect_sheet(user_id=user_id)
+    worksheets = sheet.worksheet_names
+
+    response = (
+        "\n".join(worksheets) if worksheets else "You have no lessons in your sheet!"
+    )
+
+    return response
