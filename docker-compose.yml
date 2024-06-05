@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  tik8-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python-bot-container
+    volumes:
+      - .:/app
+    command: ["python3.12", "bot.py"]
