@@ -1,3 +1,4 @@
+import logging
 from typing import Final
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
@@ -7,6 +8,13 @@ from const import TOKEN, ids
 from messages import NO_ACCESS, START_MESSAGE
 
 BOT_TOKEN: Final = TOKEN
+
+# Enable logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+# logging.getLogger("httpx").setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
 
 
 def check_access(update: Update) -> bool:
