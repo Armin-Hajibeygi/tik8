@@ -4,6 +4,23 @@ from const import gsheet_names
 from messages import NOT_VALID_WORKSHEET_NAME, NO_TASKS_FOR_TODAY, NO_WORKSHEET_IN_SHEET
 
 
+# Define the mapping from abbreviated month names to full month names
+MONTH_MAP = {
+    "Jan": "January",
+    "Feb": "February",
+    "Mar": "March",
+    "Apr": "April",
+    "May": "May",
+    "Jun": "June",
+    "Jul": "July",
+    "Aug": "August",
+    "Sep": "September",
+    "Oct": "October",
+    "Nov": "November",
+    "Dec": "December",
+}
+
+
 def connect_sheet(user_id: int) -> Sheet:
     """Connect to the Google Sheet for the given user ID."""
     return Sheet(gsheet_names[user_id])
@@ -19,6 +36,17 @@ def check_worksheet_availability(user_id: int, worksheet_name: str) -> str:
         if name.lower() == worksheet_name.lower():
             return name
     return NOT_VALID_WORKSHEET_NAME
+
+
+def get_today_dates() -> (str, str):
+    """Get today's date in both abbreviated and full month name formats."""
+    today_abbr = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
+
+    day, abbr_month = today_abbr.split()
+    full_month = MONTH_MAP[abbr_month]
+    today_full = f"{day} {full_month}"
+
+    return today_abbr, today_full
 
 
 def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
@@ -45,13 +73,13 @@ def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
 def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str) -> str:
     """Retrieve tasks for today from a single worksheet."""
     sheet.create_df(worksheet_name)
-    today = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
+    today_abbr, today_full = get_today_dates()
 
     tasks = [
         f"<b>{worksheet_name}</b> - Lesson <u>{index}</u> for the <u>{column}</u> time"
         for index, row in sheet.df.iterrows()
         for column in sheet.df.columns
-        if row[column] == today
+        if row[column] == today_abbr or row[column] == today_full
     ]
 
     return "\n".join(tasks) if tasks else NO_TASKS_FOR_TODAY
