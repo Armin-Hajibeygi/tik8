@@ -1,0 +1,18 @@
+# const.py.template
+
+# Telegram bot token (replace 'YOUR_TELEGRAM_BOT_TOKEN' with your actual bot token)
+TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+
+# Allowed IDs to chat with the bot (replace with actual IDs)
+ids = [
+    YOUR_ALLOWED_ID_1,
+    # YOUR_ALLOWED_ID_2,
+    # Add more IDs as needed
+]
+
+# Google Sheet names corresponding to the allowed IDs (replace with actual sheet names)
+gsheet_names = {
+    YOUR_ALLOWED_ID_1: "YOUR_GOOGLE_SHEET_NAME_1",
+    # YOUR_ALLOWED_ID_2: "YOUR_GOOGLE_SHEET_NAME_2",
+    # Add more entries as needed
+}
