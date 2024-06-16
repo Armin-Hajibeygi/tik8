@@ -1,4 +1,4 @@
-# Tik8 Bot README
+# Tik8 Bot
 
 Tik8 Bot is a Telegram bot designed to help users implement the Tik8 study method. It facilitates structured review schedules for better learning retention by scheduling lessons over consecutive days and additional intervals.
 
