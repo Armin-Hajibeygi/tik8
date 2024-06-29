@@ -82,7 +82,7 @@ def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str) -> str:
         if row[column] == today_abbr or row[column] == today_full
     ]
 
-    return "\n".join(tasks) if tasks else NO_TASKS_FOR_TODAY
+    return "\n".join(tasks) if tasks else f"<b>{worksheet_name}</b>: \n{NO_TASKS_FOR_TODAY}"
 
 
 def get_all_lessons(user_id: int) -> str:
