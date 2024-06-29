@@ -1,5 +1,3 @@
-# const.py.template
-
 # Telegram bot token (replace 'YOUR_TELEGRAM_BOT_TOKEN' with your actual bot token)
 TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
 
@@ -15,4 +13,14 @@ gsheet_names = {
     YOUR_ALLOWED_ID_1: "YOUR_GOOGLE_SHEET_NAME_1",
     # YOUR_ALLOWED_ID_2: "YOUR_GOOGLE_SHEET_NAME_2",
     # Add more entries as needed
+}
+
+# Default schedule for sending daily tasks
+DEFAULT_SCHEDULE = {'hour': 8, 'minute': 0}
+
+# Dictionary mapping user IDs to their respective schedule times (replace with actual times if needed)
+USER_SCHEDULES = {
+    YOUR_ALLOWED_ID_1: {'hour': 21, 'minute': 23},
+    # YOUR_ALLOWED_ID_2: {'hour': 10, 'minute': 30},
+    # Add more user schedules as needed
 }
