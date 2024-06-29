@@ -76,13 +76,16 @@ def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str) -> str:
     today_abbr, today_full = get_today_dates()
 
     tasks = [
-        f"<b>{worksheet_name}</b> - Lesson <u>{index}</u> for the <u>{column}</u> time"
+        f"Lesson <u>{index}</u> for the <u>{column}</u> time"
         for index, row in sheet.df.iterrows()
         for column in sheet.df.columns
         if row[column] == today_abbr or row[column] == today_full
     ]
 
-    return "\n".join(tasks) if tasks else f"<b>{worksheet_name}</b>: \n{NO_TASKS_FOR_TODAY}"
+    response = f"<b>{worksheet_name}</b>: \n"
+    response += "\n".join(tasks) if tasks else NO_TASKS_FOR_TODAY
+
+    return response
 
 
 def get_all_lessons(user_id: int) -> str:
