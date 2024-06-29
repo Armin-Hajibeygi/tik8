@@ -2,9 +2,11 @@ import logging
 from typing import Final
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from core import get_today_tasks, get_all_lessons
-from const import TOKEN, ids
+from const import TOKEN, ids, USER_SCHEDULES, DEFAULT_SCHEDULE
 from messages import NO_ACCESS, START_MESSAGE
 
 BOT_TOKEN: Final = TOKEN
@@ -80,8 +82,33 @@ async def sign_up(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def send_daily_task(context: ContextTypes.DEFAULT_TYPE):
+    for user_id in ids:
+        response = get_today_tasks(user_id, "")
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=response,
+            parse_mode="HTML",
+        )
+
+
+def schedule_daily_tasks(scheduler, bot):
+    for user_id in ids:
+        schedule = USER_SCHEDULES.get(user_id, DEFAULT_SCHEDULE)
+        scheduler.add_job(
+            send_daily_task,
+            CronTrigger(hour=schedule["hour"], minute=schedule["minute"]),
+            args=(ContextTypes.DEFAULT_TYPE(bot),),
+        )
+
+
 if __name__ == "__main__":
     bot = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    # Schedule jobs for each user daily task
+    scheduler = AsyncIOScheduler()
+    schedule_daily_tasks(scheduler, bot)
+    scheduler.start()
 
     # adding handlers
     bot.add_handler(CommandHandler("start", start_command_handler))
