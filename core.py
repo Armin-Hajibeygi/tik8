@@ -1,8 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from gsheet import Sheet
 from const import gsheet_names
 from messages import NOT_VALID_WORKSHEET_NAME, NO_TASKS_FOR_TODAY, NO_WORKSHEET_IN_SHEET
-
 
 # Define the mapping from abbreviated month names to full month names
 MONTH_MAP = {
@@ -38,19 +37,23 @@ def check_worksheet_availability(user_id: int, worksheet_name: str) -> str:
     return NOT_VALID_WORKSHEET_NAME
 
 
-def get_today_dates() -> (str, str):
+def get_dates(date: str) -> (str, str):
     """Get today's date in both abbreviated and full month name formats."""
-    today_abbr = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
+    if date == "today":
+        abbr_date = datetime.today().strftime("%d %b").lstrip("0").replace(" 0", " ")
+    elif date == "tomorrow":
+        tomorrow_date = datetime.today() + timedelta(days=1)
+        abbr_date = tomorrow_date.strftime("%d %b").lstrip("0").replace(" 0", " ")
 
-    day, abbr_month = today_abbr.split()
+    day, abbr_month = abbr_date.split()
     full_month = MONTH_MAP[abbr_month]
-    today_full = f"{day} {full_month}"
+    full_date = f"{day} {full_month}"
 
-    return today_abbr, today_full
+    return abbr_date, full_date
 
 
-def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
-    """Retrieve tasks for today from the specified worksheets."""
+def get_day_tasks(user_id: int, input_worksheet_name: str, date: str) -> str:
+    """Retrieve tasks for day from the specified worksheets."""
     sheet = connect_sheet(user_id)
     worksheets = (
         input_worksheet_name.split("-")
@@ -64,22 +67,24 @@ def get_today_tasks(user_id: int, input_worksheet_name: str) -> str:
         if worksheet_name == NOT_VALID_WORKSHEET_NAME:
             response_parts.append(NOT_VALID_WORKSHEET_NAME)
         else:
-            response_parts.append(get_single_worksheet_tasks(sheet, worksheet_name))
+            response_parts.append(
+                get_single_worksheet_tasks(sheet, worksheet_name, date)
+            )
         response_parts.append("\n------\n")
 
     return "".join(response_parts)
 
 
-def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str) -> str:
+def get_single_worksheet_tasks(sheet: Sheet, worksheet_name: str, date: str) -> str:
     """Retrieve tasks for today from a single worksheet."""
     sheet.create_df(worksheet_name)
-    today_abbr, today_full = get_today_dates()
+    abbr_date, full_date = get_dates(date)
 
     tasks = [
         f"Lesson <u>{index}</u> for the <u>{column}</u> time"
         for index, row in sheet.df.iterrows()
         for column in sheet.df.columns
-        if row[column] == today_abbr or row[column] == today_full
+        if row[column] == abbr_date or row[column] == full_date
     ]
 
     response = f"<b>{worksheet_name}</b>: \n"

@@ -5,7 +5,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from core import get_today_tasks, get_all_lessons
+from core import get_day_tasks, get_all_lessons
 from const import TOKEN, ids, USER_SCHEDULES, DEFAULT_SCHEDULE
 from messages import NO_ACCESS, START_MESSAGE
 
@@ -40,7 +40,24 @@ async def today_task_command_handler(
         response = NO_ACCESS
     else:
         worksheet_name = " ".join(context.args)
-        response = get_today_tasks(update.effective_user.id, worksheet_name)
+        response = get_day_tasks(update.effective_user.id, worksheet_name, "today")
+
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=response,
+        reply_to_message_id=update.effective_message.id,
+        parse_mode="HTML",
+    )
+
+
+async def tomorrow_task_command_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+):
+    if not check_access(update):
+        response = NO_ACCESS
+    else:
+        worksheet_name = " ".join(context.args)
+        response = get_day_tasks(update.effective_user.id, worksheet_name, "tomorrow")
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -84,7 +101,7 @@ async def sign_up(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def send_daily_task(context: ContextTypes.DEFAULT_TYPE):
     for user_id in ids:
-        response = get_today_tasks(user_id, "")
+        response = get_day_tasks(user_id, "")
         await context.bot.send_message(
             chat_id=user_id,
             text=response,
@@ -113,6 +130,7 @@ if __name__ == "__main__":
     # adding handlers
     bot.add_handler(CommandHandler("start", start_command_handler))
     bot.add_handler(CommandHandler("today", today_task_command_handler))
+    bot.add_handler(CommandHandler("tomorrow", tomorrow_task_command_handler))
     bot.add_handler(CommandHandler("lessons", all_lessons))
     bot.add_handler(CommandHandler("signup", sign_up))
 
