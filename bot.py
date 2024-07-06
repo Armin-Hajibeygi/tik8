@@ -101,7 +101,7 @@ async def sign_up(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def send_daily_task(context: ContextTypes.DEFAULT_TYPE):
     for user_id in ids:
-        response = get_day_tasks(user_id, "")
+        response = get_day_tasks(user_id, "", "today")
         await context.bot.send_message(
             chat_id=user_id,
             text=response,
