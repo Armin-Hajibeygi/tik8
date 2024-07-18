@@ -99,14 +99,13 @@ async def sign_up(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def send_daily_task(context: ContextTypes.DEFAULT_TYPE):
-    for user_id in ids:
-        response = get_day_tasks(user_id, "", "today")
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=response,
-            parse_mode="HTML",
-        )
+async def send_daily_task(context: ContextTypes.DEFAULT_TYPE, user_id: int):
+    response = get_day_tasks(user_id, "", "today")
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=response,
+        parse_mode="HTML",
+    )
 
 
 def schedule_daily_tasks(scheduler, bot):
@@ -115,7 +114,7 @@ def schedule_daily_tasks(scheduler, bot):
         scheduler.add_job(
             send_daily_task,
             CronTrigger(hour=schedule["hour"], minute=schedule["minute"]),
-            args=(ContextTypes.DEFAULT_TYPE(bot),),
+            args=(ContextTypes.DEFAULT_TYPE(bot), user_id),
         )
 
 
